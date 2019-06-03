@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Set;
+import java.util.Collection;
 
 public class FeedbackSummaryReports {
     private static final Logger LOG = LoggerFactory.getLogger(FeedbackSummaryReports.class);
@@ -15,17 +15,17 @@ public class FeedbackSummaryReports {
     private final File summariesDir;
     private final FreemarkerFeedbackSummaryTemplate template;
 
-    public FeedbackSummaryReports(String format) {
-        summariesDir = new File("summaries-" + format);
+    public FeedbackSummaryReports(File summariesDir, String templateFileName) {
+        this.summariesDir = summariesDir;
         try {
             prepareReportsDirectory();
-            template = FreemarkerFeedbackSummaryTemplate.fromFile("feedback-" + format + ".html");
+            template = FreemarkerFeedbackSummaryTemplate.fromFile(templateFileName);
         } catch (IOException e) {
             throw new IllegalStateException("Can't create or clean summaries directory", e);
         }
     }
 
-    public void generate(Set<FeedbackSummary> feedback) {
+    public void generate(Collection<FeedbackSummary> feedback) {
         feedback.forEach(summary -> template.generateSummaryReport(summariesDir, summary));
     }
 

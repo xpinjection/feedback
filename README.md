@@ -7,7 +7,8 @@ Following functionality was implemented:
 - Aggregate feedback by employee name and generate HTML reports for all employees by Freemarker template.
 - Calculate average marks by competence, if evaluation options have specific format like *'2 (met expectations)'*.
 - Gather comment for each competence evaluation if it follows evaluation in the next column and header name there contains *'comment'* word.
-- Automaticall detect anonymous feedback and replace feedback author with *'Anonymous'*.
+- Automatically detect anonymous feedback and replace feedback author with *'Anonymous'*.
+- Filter out email from full employee name. 
 
 ## System requirements
 To build and run this tool you need Java 8+ and Maven 3.5+ on you machine.

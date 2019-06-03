@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.support.PropertiesLoaderUtils;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -31,11 +32,11 @@ public class CsvFeedbackForm {
     private static final String SEPARATOR = " | ";
     private static final String YES = "Yes";
 
-    private final String fileName;
+    private final File feedbackFile;
     private final Properties config;
 
-    public CsvFeedbackForm(String fileName, String format) {
-        this.fileName = fileName;
+    public CsvFeedbackForm(File feedbackFile, String format) {
+        this.feedbackFile = feedbackFile;
         try {
             this.config = PropertiesLoaderUtils.loadAllProperties(format + "-config.properties");
         } catch (IOException e) {
@@ -45,7 +46,7 @@ public class CsvFeedbackForm {
 
     public Set<FeedbackSummary> aggregateFeedbackSummary() {
         Map<String, FeedbackSummary> feedback = new HashMap<>();
-        try (InputStream csv = new FileInputStream(fileName)) {
+        try (InputStream csv = new FileInputStream(feedbackFile)) {
             CsvReader reader = new CsvReader(csv, ',', Charset.forName("UTF-8"));
             reader.readHeaders();
             while (reader.readRecord()) {
@@ -120,15 +121,11 @@ public class CsvFeedbackForm {
     }
 
     private String extractPersonName(CsvReader reader, String header) {
-        String nameWithEmail = StringUtils.replace(readValue(reader, header), " - ", " ");
-        if (!StringUtils.contains(nameWithEmail, ' ')) {
-            return nameWithEmail;
-        }
-        String nameCandidate = StringUtils.substringBeforeLast(nameWithEmail, " ");
-        if (StringUtils.contains(nameCandidate, '@')) {
-            return StringUtils.substringAfter(nameWithEmail, " ");
-        }
-        return nameCandidate;
+        String dirtyName = StringUtils.replace(readValue(reader, header), " - ", " ");
+        return Arrays.stream(StringUtils.split(dirtyName))
+                .filter(StringUtils::isNoneBlank)
+                .filter(part -> !StringUtils.contains(part, "@"))
+                .collect(joining(" "));
     }
 
     private List<String> getCompetencies() {

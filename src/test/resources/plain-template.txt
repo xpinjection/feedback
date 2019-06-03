@@ -1,0 +1,15 @@
+Feedback for ${employee} from ${feedback.feedbackCount} employees.
+<#list feedback.feedbacks as f>
+
+- From ${f.author} -
+
+What is good: ${f.good}
+What could be improved: ${f.improvements}
+
+== Competencies ==
+
+<#assign mark = f.getMark("Communication in the team") />
+Communication in the team: ${mark.value} <#if mark.comment?has_content>[${mark.comment}]</#if>
+<#assign mark = f.getMark("Position vs Competency") />
+Position vs Competency: ${mark.value} <#if mark.comment?has_content>[${mark.comment}]</#if>
+</#list>
