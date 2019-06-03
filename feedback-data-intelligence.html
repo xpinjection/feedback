@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>${employee} DI unit feedback 360 results</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            height: 100%;
+        }
+        body {
+            height: 100%;
+            background: #50a3a2;
+            background: -webkit-linear-gradient(top left, #05d3d0 0%, #2eca7f 100%);
+            background: linear-gradient(to bottom right, #05d3d0 0%, #2eca7f 100%);
+            overflow: hidden;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            font-family: Verdana, Arial, sans-serif;
+            -webkit-font-smoothing: antialiased;
+            -webkit-text-size-adjust: 100%;
+        }
+
+        .container {
+            height: 88vh;
+            width: 98%;
+            max-height: 680px;
+            min-height: 400px;
+            max-width: 1200px;
+            min-width: 800px;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translateX(-50%) translateY(-50%);
+        }
+
+        .cardCnt {
+            position: absolute;
+            top: 50px;
+            bottom: 50px;
+            left: 0;
+            width: 30%;
+            background: white;
+            border-radius: 8px 0 0 8px;
+            box-shadow: 10px 10px 15px rgba(0,0,0,.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .userName {
+            font-size: 24px;
+            font-weight: normal;
+            color: #373737;
+            margin: 30px 0 15px;
+        }
+
+        .feedbackTotal {
+            font-size: 14px;
+            color: #434343;
+        }
+
+        .logoHolder {
+            width: 240px;
+        }
+
+        .listCnt {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            width: 70%;
+            background: white;
+            border-radius: 8px;
+            box-shadow: -10px 10px 15px rgba(0,0,0,.05);
+            z-index: 1;
+            overflow: hidden;
+        }
+
+        .scrolledCnt {
+            overflow: auto;
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            right: 0;
+            left: 0;
+        }
+
+        .reviewItem:last-child {
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            position: relative;
+            padding: 25px;
+            font-size: 19px;
+            font-weight: 600;
+            color: #373737;
+        }
+
+        h2:after {
+            content: '';
+            position: absolute;
+            left: -30px;
+            right: 0;
+            bottom: 0;
+            height: 1px;
+            background: -moz-radial-gradient(left,ellipse cover,#dddddd 0%,rgba(255,255,255,0) 70%);
+            background: -webkit-radial-gradient(left,ellipse cover,#dddddd 0%,rgba(255,255,255,0) 70%);
+            background: radial-gradient(ellipse at left,#dddddd 0%,rgba(255,255,255,0) 70%);
+        }
+
+        h3 {
+            margin-bottom: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            color: #2eca7f;
+        }
+
+        p {
+            margin-bottom: 10px;
+        }
+
+        .splitCnt {
+            display: flex;
+            font-size: 14px;
+            color: #646464;
+        }
+
+        .splitCol {
+            position: relative;
+            padding: 20px 20px 10px;
+        }
+
+        .reviewText {
+            width: 90%;
+        }
+
+        .reviewScore {
+            width: 40%;
+            padding-right: 10px;
+            padding-top: 10px;
+        }
+
+        .scoreItem {
+            position: relative;
+            width: 100%;
+            padding: 10px 0 10px 5px;
+            margin-bottom: 5px;
+            font-size: 12px;
+            color: #373737;
+        }
+
+        .scoreItem:after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: 0;
+            width: 100%;
+            height: 1px;
+            background: -moz-radial-gradient(center,ellipse cover,#dddddd 0%,rgba(255,255,255,0) 70%);
+            background: -webkit-radial-gradient(center,ellipse cover,#dddddd 0%,rgba(255,255,255,0) 70%);
+            background: radial-gradient(ellipse at center,#dddddd 0%,rgba(255,255,255,0) 70%);
+        }
+
+        .scoreLabel {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 13px;
+        }
+
+        .scoreValue {
+            display: block;
+            text-align: left;
+        }
+
+        .scoreComment {
+            margin-top: 5px;
+            display: block;
+            color: #848484;
+            font-style: italic;
+        }
+
+        .highlighted {
+            background: #2eca7f;
+            color: #fefefe;
+            padding: 2px 5px;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 9px;
+            letter-spacing: 0.2px;
+        }
+
+
+
+        .bg-bubbles {
+            list-style: disc;
+            margin-top: 25px;
+            margin-bottom: 25px;
+            padding-left: 0;
+            list-style-position: inside;
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .bg-bubbles li {
+            position: absolute;
+            list-style: none;
+            display: block;
+            width: 80px;
+            height: 80px;
+            background-color: rgba(255,255,255,.1);
+            bottom: -320px;
+            -webkit-animation: square 50s infinite;
+            animation: square 50s infinite;
+            -webkit-transition-timing-function: linear;
+            transition-timing-function: linear;
+            border-radius: 4px;
+            -moz-border-radius: 4px;
+            -webkit-border-radius: 4px;
+            -khtml-border-radius: 4px
+        }
+
+        .bg-bubbles li:nth-child(1) {
+            left: 10%
+        }
+
+        .bg-bubbles li:nth-child(2) {
+            left: 20%;
+            width: 160px;
+            height: 160px;
+            -webkit-animation-delay: 2s;
+            animation-delay: 2s;
+            -webkit-animation-duration: 34s;
+            animation-duration: 34s
+        }
+
+        .bg-bubbles li:nth-child(3) {
+            left: 25%;
+            -webkit-animation-delay: 4s;
+            animation-delay: 4s
+        }
+
+        .bg-bubbles li:nth-child(4) {
+            left: 40%;
+            width: 120px;
+            height: 120px;
+            -webkit-animation-duration: 44s;
+            animation-duration: 44s
+        }
+
+        .bg-bubbles li:nth-child(5) {
+            left: 70%
+        }
+
+        .bg-bubbles li:nth-child(6) {
+            left: 80%;
+            width: 240px;
+            height: 240px;
+            -webkit-animation-delay: 3s;
+            animation-delay: 3s
+        }
+
+        .bg-bubbles li:nth-child(7) {
+            left: 32%;
+            width: 320px;
+            height: 320px;
+            -webkit-animation-delay: 7s;
+            animation-delay: 7s
+        }
+
+        .bg-bubbles li:nth-child(8) {
+            left: 55%;
+            width: 40px;
+            height: 40px;
+            -webkit-animation-delay: 15s;
+            animation-delay: 15s;
+            -webkit-animation-duration: 80s;
+            animation-duration: 80s
+        }
+
+        .bg-bubbles li:nth-child(9) {
+            left: 25%;
+            width: 20px;
+            height: 20px;
+            -webkit-animation-delay: 2s;
+            animation-delay: 2s;
+            -webkit-animation-duration: 80s;
+            animation-duration: 80s
+        }
+
+        .bg-bubbles li:nth-child(10) {
+            left: 90%;
+            width: 320px;
+            height: 320px;
+            -webkit-animation-delay: 22s;
+            animation-delay: 22s
+        }
+
+        @-webkit-keyframes square {
+            0% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0)
+            }
+
+            100% {
+                -webkit-transform: translateY(-1500px) rotate(600deg);
+                transform: translateY(-1500px) rotate(600deg)
+            }
+        }
+
+        @keyframes square {
+            0% {
+                -webkit-transform: translateY(0);
+                transform: translateY(0)
+            }
+
+            100% {
+                -webkit-transform: translateY(-1500px) rotate(600deg);
+                transform: translateY(-1500px) rotate(600deg)
+            }
+        }
+
+
+        @-webkit-keyframes bounceInUp {
+            from,
+            60%,
+            75%,
+            90%,
+            to {
+                -webkit-animation-timing-function: cubic-bezier(
+                        0.215,
+                        0.61,
+                        0.355,
+                        1
+                );
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+
+            from {
+                opacity: 0;
+                -webkit-transform: translate3d(0, 3000px, 0);
+                transform: translate3d(0, 3000px, 0);
+            }
+
+            60% {
+                opacity: 1;
+                -webkit-transform: translate3d(0, -20px, 0);
+                transform: translate3d(0, -20px, 0);
+            }
+
+            75% {
+                -webkit-transform: translate3d(0, 10px, 0);
+                transform: translate3d(0, 10px, 0);
+            }
+
+            90% {
+                -webkit-transform: translate3d(0, -5px, 0);
+                transform: translate3d(0, -5px, 0);
+            }
+
+            to {
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes bounceInUp {
+            from,
+            60%,
+            75%,
+            90%,
+            to {
+                -webkit-animation-timing-function: cubic-bezier(
+                        0.215,
+                        0.61,
+                        0.355,
+                        1
+                );
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+
+            from {
+                opacity: 0;
+                -webkit-transform: translate3d(0, 3000px, 0);
+                transform: translate3d(0, 3000px, 0);
+            }
+
+            60% {
+                opacity: 1;
+                -webkit-transform: translate3d(0, -20px, 0);
+                transform: translate3d(0, -20px, 0);
+            }
+
+            75% {
+                -webkit-transform: translate3d(0, 10px, 0);
+                transform: translate3d(0, 10px, 0);
+            }
+
+            90% {
+                -webkit-transform: translate3d(0, -5px, 0);
+                transform: translate3d(0, -5px, 0);
+            }
+
+            to {
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .bounceInUp {
+            -webkit-animation-name: bounceInUp;
+            animation-name: bounceInUp;
+        }
+
+        .animated {
+            -webkit-animation-duration: 1s;
+            animation-duration: 1s;
+        }
+
+        .animated.infinite {
+            -webkit-animation-iteration-count: infinite;
+            animation-iteration-count: infinite;
+        }
+
+        .animated.delay-1s {
+            -webkit-animation-delay: 1s;
+            animation-delay: 1s;
+        }
+
+        .animated.delay-2s {
+            -webkit-animation-delay: 2s;
+            animation-delay: 2s;
+        }
+
+        .animated.delay-3s {
+            -webkit-animation-delay: 3s;
+            animation-delay: 3s;
+        }
+
+        .animated.delay-4s {
+            -webkit-animation-delay: 4s;
+            animation-delay: 4s;
+        }
+
+        .animated.delay-5s {
+            -webkit-animation-delay: 5s;
+            animation-delay: 5s;
+        }
+
+        .animated.fast {
+            -webkit-animation-duration: 800ms;
+            animation-duration: 800ms;
+        }
+
+        .animated.faster {
+            -webkit-animation-duration: 500ms;
+            animation-duration: 500ms;
+        }
+
+        .animated.slow {
+            -webkit-animation-duration: 2s;
+            animation-duration: 2s;
+        }
+
+        .animated.slower {
+            -webkit-animation-duration: 3s;
+            animation-duration: 3s;
+        }
+
+        @media (print), (prefers-reduced-motion) {
+            .animated {
+                -webkit-animation: unset !important;
+                animation: unset !important;
+                -webkit-transition: none !important;
+                transition: none !important;
+            }
+        }
+
+        @-webkit-keyframes bounceInDown {
+            from,
+            60%,
+            75%,
+            90%,
+            to {
+                -webkit-animation-timing-function: cubic-bezier(
+                        0.215,
+                        0.61,
+                        0.355,
+                        1
+                );
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+
+            0% {
+                opacity: 0;
+                -webkit-transform: translate3d(0, -3000px, 0);
+                transform: translate3d(0, -3000px, 0);
+            }
+
+            60% {
+                opacity: 1;
+                -webkit-transform: translate3d(0, 25px, 0);
+                transform: translate3d(0, 25px, 0);
+            }
+
+            75% {
+                -webkit-transform: translate3d(0, -10px, 0);
+                transform: translate3d(0, -10px, 0);
+            }
+
+            90% {
+                -webkit-transform: translate3d(0, 5px, 0);
+                transform: translate3d(0, 5px, 0);
+            }
+
+            to {
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        @keyframes bounceInDown {
+            from,
+            60%,
+            75%,
+            90%,
+            to {
+                -webkit-animation-timing-function: cubic-bezier(
+                        0.215,
+                        0.61,
+                        0.355,
+                        1
+                );
+                animation-timing-function: cubic-bezier(0.215, 0.61, 0.355, 1);
+            }
+
+            0% {
+                opacity: 0;
+                -webkit-transform: translate3d(0, -3000px, 0);
+                transform: translate3d(0, -3000px, 0);
+            }
+
+            60% {
+                opacity: 1;
+                -webkit-transform: translate3d(0, 25px, 0);
+                transform: translate3d(0, 25px, 0);
+            }
+
+            75% {
+                -webkit-transform: translate3d(0, -10px, 0);
+                transform: translate3d(0, -10px, 0);
+            }
+
+            90% {
+                -webkit-transform: translate3d(0, 5px, 0);
+                transform: translate3d(0, 5px, 0);
+            }
+
+            to {
+                -webkit-transform: translate3d(0, 0, 0);
+                transform: translate3d(0, 0, 0);
+            }
+        }
+
+        .bounceInDown {
+            -webkit-animation-name: bounceInDown;
+            animation-name: bounceInDown;
+        }
+
+    </style>
+</head>
+<body>
+<ul class="bg-bubbles"><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li><li></li></ul>
+
+<div class="container">
+    <div class="cardCnt animated bounceInDown">
+        <div class="logoHolder">
+            <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" id="Layer_1" x="0px" y="0px" viewBox="0 0 138.7 102.8" style="enable-background:new 0 0 138.7 102.8;" xml:space="preserve">
+                <style type="text/css">
+                    .st0{fill:url(#SVGID_1_);}
+                    .st1{fill:url(#SVGID_2_);}
+                </style>
+                <linearGradient id="SVGID_1_" gradientUnits="userSpaceOnUse" x1="34.3907" y1="5.8055" x2="34.3907" y2="95.4448">
+                    <stop offset="0" style="stop-color:#47C1C3"/>
+                    <stop offset="1" style="stop-color:#0E92CC"/>
+                </linearGradient>
+                <path class="st0" d="M59.3,13.3l-7.5-7.5L11.3,46.3l0,0c0,0,0,0,0,0c-2.4,2.4-2.4,6.2-0.1,8.6c0,0,0,0,0,0l3.3,3.3l0,0l37.2,37.2  l7.5-7.5L21.9,50.7L59.3,13.3z"/>
+                <linearGradient id="SVGID_2_" gradientUnits="userSpaceOnUse" x1="88.6405" y1="8.3828" x2="88.6405" y2="95.4448">
+                    <stop offset="0" style="stop-color:#47C1C3"/>
+                    <stop offset="1" style="stop-color:#0E92CC"/>
+                </linearGradient>
+                <path class="st1" d="M128.6,46.3C128.6,46.3,128.6,46.3,128.6,46.3l-0.1-0.1l0,0l0,0l-3.1-3.1l-33-33c0,0,0,0,0,0  c-2.4-2.2-6.2-2.2-8.6,0.1c0,0,0,0,0,0L48.6,45.2l0,0l0,0c0,0,0,0,0,0c-2.2,2.4-2.2,6.1,0.1,8.4c0,0,0,0,0,0l17.9,17.9l0,0l0,0  c0,0,0,0,0,0c2.3,2.3,6,2.3,8.4,0.2c0,0,0,0,0,0l3.4-3.4l0,0l9.1-9.1l3.1-3.1l0,0l0,0l0.1-0.1l0,0c0,0,0,0,0,0  c2.3-2.4,2.3-6.2,0-8.6c0,0,0,0,0,0l-3.2-3.2l0,0l-5.9-5.9l-7.5,7.5l5.9,5.9L71,60.9L59.5,49.4l28.6-28.6l29.7,29.7L80.4,87.9  l7.5,7.5L128.4,55l0,0c0,0,0,0,0,0C130.8,52.6,130.9,48.8,128.6,46.3z"/>
+            </svg>
+        </div>
+        <span class="userName">
+            ${employee}
+        </span>
+        <span class="feedbackTotal">
+            You have ${feedback.feedbackCount} feedbacks
+        </span>
+    </div>
+    <div class="listCnt animated bounceInUp">
+        <div class="scrolledCnt">
+			<#list feedback.feedbacks as f>
+            <div class="reviewItem">
+                <h2>
+                    ${f.author}
+                </h2>
+                <div class="splitCnt">
+                    <div class="splitCol reviewText">
+                        <h3>What is good</h3>
+                        <p>
+                            ${f.good}
+                        </p>
+                        <h3>What to improve</h3>
+                        <p>
+                            ${f.improvements}
+                        </p>
+                    </div>
+                </div>
+            </div>
+			</#list>            
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
