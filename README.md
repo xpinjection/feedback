@@ -25,7 +25,8 @@ Alternative option is to build executable JAR with Maven and then execute follow
 ## Configuration options
 There are several configuration options for this tool:
 
-- feedback data is expected in ***feedback.csv*** file in base directory;
+- feedback data is expected to be in ***feedback.csv*** file in base directory (mandatory configuration);
+- list of employees (full name per line), who requested anonymous feedback, is expected to be in ***anonymous-requests.txt*** file in base directory (optional configuration); 
 - tool is prepackaged with following formats support: ***360***, ***smart-city***, ***healthcare***, ***data-intelligence***;
 - for any custom format Freemarker template must be placed in base directory with name ***feedback-FORMAT.html*** and headers mapping must be added to classpath with name ***FORMAT-config.properties*** (for example, take a look at *feedback-360.html* and *src/main/resources/360-config.properties*).
 

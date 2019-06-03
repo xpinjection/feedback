@@ -34,6 +34,7 @@ public class CsvFeedbackForm {
 
     private final File feedbackFile;
     private final Properties config;
+    private final Set<String> anonymousRequests = new HashSet<>();
 
     public CsvFeedbackForm(File feedbackFile, String format) {
         this.feedbackFile = feedbackFile;
@@ -67,7 +68,8 @@ public class CsvFeedbackForm {
         Feedback feedback = new Feedback(author);
         feedback.setEmployee(employee);
         feedback.setPeriod(readValue(reader, formHeader(FEEDBACK_PERIOD)));
-        if (YES.equals(readValue(reader, formHeader(ANONYMOUS_CHECK)))) {
+        if (YES.equals(readValue(reader, formHeader(ANONYMOUS_CHECK)))
+                && !anonymousRequests.contains(employee)) {
             feedback.setAnonymous(false);
         }
         fillMarks(reader, feedback);
@@ -93,18 +95,22 @@ public class CsvFeedbackForm {
         if (StringUtils.isBlank(evaluation)) {
             return Mark.MISSED;
         }
+        Mark mark = parseMark(evaluation);
+        String comment = getCommentForMark(reader, criterion);
+        if (StringUtils.isNoneBlank(comment)) {
+            mark.setComment(comment);
+        }
+        return mark;
+    }
+
+    private Mark parseMark(String evaluation) {
         int value = 0;
         String title = evaluation;
         if (StringUtils.contains(evaluation, "(")) {
             value = Integer.parseInt(StringUtils.substringBefore(evaluation, "(").trim());
             title = StringUtils.substringBetween(evaluation, "(", ")");
         }
-        Mark mark = new Mark(value, title);
-        String comment = getCommentForMark(reader, criterion);
-        if (StringUtils.isNoneBlank(comment)) {
-            mark.setComment(comment);
-        }
-        return mark;
+        return new Mark(value, title);
     }
 
     private String getCommentForMark(CsvReader reader, String criterion) {
@@ -146,5 +152,10 @@ public class CsvFeedbackForm {
                 .map(header -> readValue(reader, header))
                 .map(StringEscapeUtils::unescapeCsv)
                 .collect(joining(""));
+    }
+
+    public CsvFeedbackForm withAnonymousFeedbackFor(List<String> anonymousRequests) {
+        this.anonymousRequests.addAll(anonymousRequests);
+        return this;
     }
 }

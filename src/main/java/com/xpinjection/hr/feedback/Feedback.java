@@ -10,6 +10,8 @@ import java.util.Optional;
 
 @RequiredArgsConstructor
 public class Feedback {
+    public static final String ANONYMOUS = "Anonymous";
+
     private final String author;
     private final Map<String, Mark> marks = new HashMap<>();
 
@@ -33,7 +35,7 @@ public class Feedback {
     }
 
     public String getAuthor() {
-        return (anonymous && !isSelfReview()) ? "Anonymous" : author;
+        return (anonymous && !isSelfReview()) ? ANONYMOUS : author;
     }
 
     private boolean isSelfReview() {
